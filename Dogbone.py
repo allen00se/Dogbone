@@ -87,6 +87,12 @@ def run(context):
 
                 boolInp = inputs.addBoolValueInput("yup", "Y-Up", True)
                 boolInp.initialValue = False
+				
+                boolInpX = inputs.addBoolValueInput("xup", "X-Up", True)
+                boolInpX.initialValue = False
+				
+				#boolInpZ = inputs.addBoolValueInput("zup", "Z-Up", True)
+				#boolInpZ.initialValue = False
 
                 # Connect up to command related events.
                 onExecute = CommandExecutedHandler()
@@ -118,6 +124,8 @@ def run(context):
                             offStr = input.expression
                         elif input.id == 'yup':
                             yup = input.value
+                        elif input.id == 'xup':
+                            xup = input.value
                         elif input.id == 'Select':                                                
                             edges = []
                             bodies = []                            
@@ -140,7 +148,7 @@ def run(context):
                             if bodyEdge.geometry.objectType == adsk.core.Line3D.classType():                        
                                         
                                 # Check if edge is vertical
-                                if isVertical(bodyEdge, yup):
+                                if isVertical(bodyEdge, yup, xup):
 
                                     # Check if its an internal edge
                                     if (getAngleBetweenFaces(bodyEdge) < math.pi ):
@@ -295,9 +303,12 @@ def findCorner(edge):
 
 # Checks if an edge is verticle
     # Check if edge is vertical
-def isVertical(e, yup):
+def isVertical(e, yup, xup):
     if yup:
         return math.fabs(e.geometry.startPoint.x - e.geometry.endPoint.x) < .00001 \
+            and math.fabs(e.geometry.startPoint.z - e.geometry.endPoint.z) <.00001
+    elif xup:
+            return math.fabs(e.geometry.startPoint.y - e.geometry.endPoint.y) < .00001 \
             and math.fabs(e.geometry.startPoint.z - e.geometry.endPoint.z) <.00001
     return math.fabs(e.geometry.startPoint.x - e.geometry.endPoint.x) < .00001 \
         and math.fabs(e.geometry.startPoint.y - e.geometry.endPoint.y) <.00001
